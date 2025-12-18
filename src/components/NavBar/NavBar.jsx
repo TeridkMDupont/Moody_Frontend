@@ -18,7 +18,7 @@ const NavBar = () => {
         <ul className={styles.navbarNav}>
           <li>Welcome, {user.username}</li>
           <li>
-            <Link to="/">Dashboard</Link>
+            <Link to="/moods">Your Moods</Link>
           </li>
           <li>
             <Link to="/new-mood">New Mood</Link>
