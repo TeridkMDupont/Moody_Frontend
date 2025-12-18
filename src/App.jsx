@@ -1,5 +1,5 @@
-import { useContext } from "react";
-import { Routes, Route } from "react-router-dom";
+import { useContext, useState, useEffect } from 'react';
+import { Routes, Route } from 'react-router-dom';
 
 import NavBar from "./components/NavBar/NavBar";
 import SignUpForm from "./components/SignUpForm/SignUpForm";
@@ -9,19 +9,41 @@ import Dashboard from "./components/Dashboard/Dashboard.jsx";
 import Landing from "./components/Landing/Landing";
 import NewMood from "./components/NewMood/NewMood.jsx";
 
-import { UserContext } from "./contexts/UserContext";
+import * as moodService from './services/moodService.js';
+import MoodList from './components/MoodList/MoodList.jsx';
+import MoodDetails from './components/MoodDetails/MoodDetails.jsx';
+
+
+import { UserContext } from './contexts/UserContext';
 
 const App = () => {
   const { user } = useContext(UserContext);
+  const [moods, setMoods] = useState([]);
+
+  useEffect(() => {
+    const fetchAllMoods = async () => {
+      const moodsData = await moodService.index();
+      setMoods(moodsData);
+    }
+    if (user) fetchAllMoods();
+  }, [user]);
   return (
     <>
       <NavBar />
       <Routes>
-        <Route path="/" element={user ? <Dashboard /> : <Landing />} />
-        <Route path="/sign-up" element={<SignUpForm />} />
-        <Route path="/sign-in" element={<SignInForm />} />
-        <Route path="/new-mood" element={user ? <NewMood /> : <SignInForm />} />
-        <Route path="*" element={<h2>404: Page Not Found</h2>} />
+        <Route path='/' element={user ? <Dashboard /> : <Landing />} />
+        {user ? (
+          <>
+          <Route path='/moods' element={<MoodList moods={moods}/>} />
+          <Route path='/new-mood' element={<NewMood />} />
+          <Route path='/moods/:moodId' element={<MoodDetails />} />
+          </>
+        ) : (
+          <>
+        <Route path='/sign-up' element={<SignUpForm />} />
+        <Route path='/sign-in' element={<SignInForm />} />
+        </>
+        )}
       </Routes>
     </>
   );

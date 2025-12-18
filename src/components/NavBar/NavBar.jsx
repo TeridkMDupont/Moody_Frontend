@@ -17,15 +17,11 @@ const NavBar = () => {
       {user ? (
         <ul className={styles.navbarNav}>
           <li>Welcome, {user.username}</li>
-          <li>
-            <Link to="/">Dashboard</Link>
-          </li>
-          <li>
-            <Link to="/new-mood">New Mood</Link>
-          </li>
-          <li>
-            <button onClick={handleSignOut}>Sign Out</button>
-          </li>
+          {/* The new link */}
+          <li><Link to='/'>Dashboard</Link></li>
+          <li><Link to='/new-mood'>New Mood</Link></li>
+          <li><Link to='/moods'>Moods</Link></li>
+          <li><Link to='/' onClick={handleSignOut}>Sign Out</Link></li>
         </ul>
       ) : (
         <ul className={styles.navbarNav}>
