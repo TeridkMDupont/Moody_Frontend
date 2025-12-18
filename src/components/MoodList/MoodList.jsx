@@ -1,10 +1,24 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { UserContext } from "../../contexts/UserContext";
+import * as moodService from "../../services/moodService";
 
-const MoodList = ({ moods = [] }) => {
+const MoodList = () => {
+  const [moods, setMoods] = useState([]);
   const { user } = useContext(UserContext);
+
+  useEffect(() => {
+    const fetchMoods = async () => {
+      try {
+        const data = await moodService.index();
+        setMoods(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchMoods();
+  }, []);
 
   return (
     <main>
@@ -14,7 +28,7 @@ const MoodList = ({ moods = [] }) => {
         <hr style={{ marginBottom: "2rem" }} />
       </header>
 
-      {moods.length === 0 ? (
+      {!Array.isArray(moods) || moods.length === 0 ? (
         <p>No moods yet. Create your first mood!</p>
       ) : (
         moods.map((mood) => (

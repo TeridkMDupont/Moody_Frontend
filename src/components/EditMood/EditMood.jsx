@@ -1,9 +1,10 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import styles from "./NewMood.module.scss";
-import * as moodService from "../../services/moodService";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import * as moodService from '../../services/moodService';
+import styles from "../NewMood/NewMood.module.scss"; // Reusing styles
 
-const NewMood = () => {
+const EditMood = () => {
+  const { moodId } = useParams();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -13,6 +14,23 @@ const NewMood = () => {
     category: "Happy",
     intensity: 5,
   });
+
+  useEffect(() => {
+    const fetchMood = async () => {
+      try {
+        const moodData = await moodService.show(moodId);
+        setFormData({
+          title: moodData.title,
+          description: moodData.description || "",
+          category: moodData.category,
+          intensity: moodData.intensity,
+        });
+      } catch (err) {
+        setError("Failed to load mood");
+      }
+    };
+    fetchMood();
+  }, [moodId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -28,31 +46,24 @@ const NewMood = () => {
     setError(null);
 
     try {
-      const newMood = await moodService.create(formData);
-
-      if (newMood.error) {
-        throw new Error(newMood.error);
-      }
-
-      navigate("/");
+      await moodService.update(moodId, formData);
+      navigate(`/moods/${moodId}`);
     } catch (err) {
-      setError(err.message);
+      setError("Failed to update mood");
       setIsLoading(false);
     }
   };
 
   const handleCancel = () => {
-    navigate("/");
+    navigate(`/moods/${moodId}`);
   };
 
   return (
     <div className={styles.newMoodContainer}>
       <div className={styles.newMoodContent}>
         <header className={styles.header}>
-          <h1 className={styles.title}>Create New Mood</h1>
-          <p className={styles.subtitle}>
-            How are you feeling? Share your mood with us.
-          </p>
+          <h1 className={styles.title}>Edit Mood</h1>
+          <p className={styles.subtitle}>Update how you're feeling.</p>
         </header>
 
         {error && (
@@ -74,7 +85,6 @@ const NewMood = () => {
               onChange={handleChange}
               className={styles.formInput}
               required
-              placeholder="e.g., My Mood Today"
               disabled={isLoading}
             />
           </div>
@@ -90,7 +100,6 @@ const NewMood = () => {
               onChange={handleChange}
               className={styles.formTextarea}
               rows="4"
-              placeholder="Describe your mood... (optional)"
               disabled={isLoading}
             />
           </div>
@@ -135,9 +144,8 @@ const NewMood = () => {
               className={styles.formRange}
               required
               disabled={isLoading}
-              aria-describedby="intensity-help"
             />
-            <small id="intensity-help">Scale from 1 (low) to 10 (high)</small>
+            <small>Scale from 1 (low) to 10 (high)</small>
           </div>
 
           <div className={styles.formActions}>
@@ -154,7 +162,7 @@ const NewMood = () => {
               className={styles.submitButton}
               disabled={isLoading}
             >
-              {isLoading ? "Saving..." : "Create Mood"}
+              {isLoading ? "Updating..." : "Update Mood"}
             </button>
           </div>
         </form>
@@ -163,4 +171,4 @@ const NewMood = () => {
   );
 };
 
-export default NewMood;
+export default EditMood;
