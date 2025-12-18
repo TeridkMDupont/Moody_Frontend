@@ -25,10 +25,7 @@ const MoodDetails = () => {
         <header>
           <h1>{mood.title}</h1>
           <h2>{mood.category}</h2>
-          <p>
-            {`${mood.author.username} posted on
-            ${new Date(mood.createdAt).toLocaleDateString()}`}
-          </p>
+
         </header>
         <p>{mood.intensity}</p>
         <p>{mood.description}</p>
@@ -36,6 +33,10 @@ const MoodDetails = () => {
         <Link to={`/moods/${moodId}/edit`}>
           <button>Edit Mood</button>
         </Link>
+        <p>
+          {`${mood.author.username} posted on
+          ${new Date(mood.dateRecorded).toLocaleDateString()}`}
+        </p>
       </section>
     </main>
   );
