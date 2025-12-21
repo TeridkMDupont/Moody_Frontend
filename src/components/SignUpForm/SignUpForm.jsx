@@ -1,6 +1,6 @@
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import styles from './SignUpForm.module.scss';
 import { signUp } from '../../services/authService';
 
 import { UserContext } from '../../contexts/UserContext';
@@ -41,10 +41,14 @@ const SignUpForm = () => {
   };
 
   return (
-    <main>
-      <h1>Sign Up</h1>
-      <p>{message}</p>
-      <form onSubmit={handleSubmit}>
+    <main className={styles.container}>
+      <section>
+        {/* Placeholder for image or branding */}
+      </section>
+      <section>
+        <form onSubmit={handleSubmit}>
+          <h1>Sign Up</h1>
+          <p>{message}</p>
         <div>
           <label htmlFor='username'>Username:</label>
           <input
@@ -83,6 +87,7 @@ const SignUpForm = () => {
           <button onClick={() => navigate('/')}>Cancel</button>
         </div>
       </form>
+      </section>
     </main>
   );
 };
